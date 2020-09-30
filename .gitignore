@@ -22,8 +22,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+!cypress/screenshots
 cypress/screenshots/*
-!cypress/screenshots/
 
+!cypress/videos
 cypress/videos/*
-!cypress/videos/
