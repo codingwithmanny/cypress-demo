@@ -1,68 +1,200 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Cypress Demo
 
-## Available Scripts
+This project is to sample to demonstrate how Cypress can be used to automate end to end testing.
 
-In the project directory, you can run:
+For reference [Cypress.io](https://www.cypress.io)
 
-### `yarn start`
+**NOTE:** Tests between testers and programmers will need to have a convention defined to better identify and reference different types of test scenarios.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**_Example_**
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+> **Testing Scenario Name:** `Successfully Login & Logout`
+>
+> **(Optional) Description:** User is able to login with correct credentials, be redirected to dashboard, and is able to logout and be redirected back to the login screen.
 
-### `yarn test`
+---
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Table Of Contents
 
-### `yarn build`
+- [Requirements](#requirements)
+- [Local Setup](#local-setup)
+  - [Step 1 - Install Dependencies](#step-1---install-dependencies)
+  - [Step 2 - Run Cypress Open](#step-2---run-cypress-open)
+- [Creating Tests From Chrome Extension](#creating-tests-from-chrome-extension)
+  - [Step 1 - Defining A Test Scenario](#step-1---defining-a-test-scenario)
+  - [Step 2 - Record User Interactions](#step-2---record-user-interactions)
+  - [Step 3 - Adding Test To Cypress Code](#step-3---adding-test-to-cypress-code)
+- [Running CLI Tests](#running-cli-tests)
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## Requirements
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- NodeJS 10.15.3+ (or NVM)
+- Yarn 1.19.2+ ([Link](https://yarnpkg.com))
+- Chrome Browser
+- Cypress Chrome Extension ([Link](https://chrome.google.com/webstore/detail/cypress-scenario-recorder/fmpgoobcionmfneadjapdabmjfkmfekb))
 
-### `yarn eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Local Setup
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**NOTE:** you absolutely need `yarn` for this project to run.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Step 1 - Install Dependencies
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Run:
 
-## Learn More
+```bash
+yarn install;
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Step 2 - Run Cypress Open
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+To see the tests in action run:
 
-### Code Splitting
+```bash
+yarn test:ci:e2e:open;
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+When open, click on `login.spec.js` to run the tests.
 
-### Analyzing the Bundle Size
+![Cypress Open - Part 1](markdown/test-page-00a.png)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+See the tests in action:
 
-### Making a Progressive Web App
+![Cypress Open - Part 2](markdown/test-page-00b.png)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+---
 
-### Advanced Configuration
+## Creating Tests From Chrome Extension
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+This is guide on how to create tests.
 
-### Deployment
+**NOTE** You need the [Cypress Chrome Extension](https://chrome.google.com/webstore/detail/cypress-scenario-recorder/fmpgoobcionmfneadjapdabmjfkmfekb) installed for this section.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+### Step 1 - Defining A Test Scenario
 
-### `yarn build` fails to minify
+Using the **_Example_**:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+> **Testing Scenario Name:** Successfully Login & Logout
+>
+> **(Optional) Description:** User is able to login with correct credentials, be redirected to dashboard, and is able to logout and be redirected back to the login screen.
+
+### Step 2 - Record User Interactions
+
+The use will go to site to be tested (http://localhost:3000) in this case and in the Cypress Chrome Extension, make sure their test is clear (if the `Restart` button is present, click it to reset everything), and then press `Record`.
+
+![Test Page](markdown/test-page-01.png)
+
+**User Interactions:**
+
+- 1 - On the page, refresh the page one more time, so that the route is registed (for good measure).
+- 2 - Click to focus on `Email Input Field` and type in `test@test.com`
+- Press <kbd>Tab</kbd> (or click to focus on `Password Input Field`) and type in `asdf1234`
+- 3 - Click the button `Login`
+- 4 - When redirected to `/dashboard`, click the button `Logout`
+- 5 - When redirect to `/login`, in the Chrome Extension click `Stop`
+
+![Stop Tests](markdown/test-page-02.png)
+
+When the process has stopped, in the Chrome Extension, click `copy to clipboard` to send the test scenario to a programmer / dev.
+
+![Copy Test](markdown/test-page-03.png)
+
+### Step 3 - Adding Test To Cypress Code
+
+Once the copied code is received from [#Step 2](#step-2---record-user-interactions), it should look something like this:
+
+```javascript
+describe("test_name", function () {
+  it("what_it_does", function () {
+    cy.viewport(1440, 713);
+
+    cy.visit("http://localhost:3000/login");
+
+    cy.get(
+      ".row > .col-4 > form > .form-group:nth-child(1) > .form-control"
+    ).click();
+
+    cy.get(
+      ".row > .col-4 > form > .form-group:nth-child(1) > .form-control"
+    ).click();
+
+    cy.get(
+      ".row > .col-4 > form > .form-group:nth-child(1) > .form-control"
+    ).type("test@test.com");
+
+    cy.get(
+      ".row > .col-4 > form > .form-group:nth-child(2) > .form-control"
+    ).type("asdf1234");
+
+    cy.get(".row > .col-4 > form > .form-group > .btn").click();
+
+    cy.get("div > .container > .row > .col-8 > .btn").click();
+  });
+});
+```
+
+We'll copy the code, paste, and modify tit into our existing test for the login test file.
+
+**File:** `cypress/integration/login.spec.js`
+
+```diff
+/**
+ * Login - Successes
+ */
+context("Login", () => {
+-     describe("test_name", function () {
+-        it("what_it_does", function () {
++        it("should Successfully Login & Logout", function () {
+-            # add viewpoert only if needed for browser size testing
+-            cy.viewport(1440, 713);
+
+-            # the domain is set by the `cypress.json`
+-            cy.visit("http://localhost:3000/login");
++            cy.visit("/login");
+
+            cy.get(
+            ".row > .col-4 > form > .form-group:nth-child(1) > .form-control"
+            ).click();
+
+            cy.get(
+            ".row > .col-4 > form > .form-group:nth-child(1) > .form-control"
+            ).click();
+
+            cy.get(
+            ".row > .col-4 > form > .form-group:nth-child(1) > .form-control"
+            ).type("test@test.com");
+
+            cy.get(
+            ".row > .col-4 > form > .form-group:nth-child(2) > .form-control"
+            ).type("asdf1234");
+
+            cy.get(".row > .col-4 > form > .form-group > .btn").click();
+
+            cy.get("div > .container > .row > .col-8 > .btn").click();
+        });
+-    });
+})
+```
+
+When done, run the cypress in cli with:
+
+```bash
+yarn test:ci:e2e:run;
+```
+
+![CLI Cypress Tests Passed](markdown/terminal.png)
+
+---
+
+## Running CLI Tests
+
+TL;DR
+
+```bash
+yarn test:ci:e2e:run;
+```
+
+The goal of the CLI tests is to run it part of the CI/CD process for automated tests.
